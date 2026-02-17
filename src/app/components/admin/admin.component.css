@@ -1,0 +1,365 @@
+.page-spacing {
+  padding-top: 4rem;
+  padding-bottom: 4rem;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4rem;
+}
+
+.header-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 1.2;
+  /* Gradient Text Effect */
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: var(--primary);
+}
+
+.welcome-msg {
+  color: var(--accent); /* distinct colorful look */
+  font-size: 1.1rem;
+  font-weight: 700;
+}
+
+.admin-tabs {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 99px;
+  padding: 0.35rem;
+  box-shadow: var(--shadow-sm);
+  align-self: center;
+  display: flex;
+  gap: 0.25rem;
+  /* Prevent tabs from shrinking weirdly on desktop */
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  padding: 0.75rem 2rem;
+  border: none;
+  background: transparent;
+  border-radius: 99px;
+  font-weight: 700;
+  color: var(--text-muted);
+  transition: all 0.2s;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.tab-btn:hover {
+  color: var(--primary);
+}
+.tab-btn.active {
+  background: var(--primary);
+  color: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.toolbar-right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Scrollable Container */
+.table-container {
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: auto; /* Ensure horizontal scroll */
+  border: 1px solid var(--border-color);
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  background: var(--bg-surface);
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--bg-surface);
+  min-width: 600px; /* Ensure table doesn't squish too much */
+}
+
+.data-table th,
+.data-table td {
+  padding: 1.25rem 1.5rem;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Sticky Header */
+.data-table th {
+  background: var(--bg-body);
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  box-shadow: 0 1px 0 var(--border-color);
+}
+
+.data-table tr:hover {
+  background-color: var(--bg-body);
+}
+.data-table tr.clickable:hover {
+  cursor: pointer;
+  background-color: var(--primary-light);
+}
+.data-table tr:last-child td {
+  border-bottom: none;
+}
+
+.text-right {
+  text-align: right;
+}
+
+/* Action Buttons Positioning */
+.action-row {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.confirm-row {
+  background: var(--bg-body);
+  padding: 0.25rem 0.75rem;
+  border-radius: 99px;
+  display: inline-flex;
+}
+
+.btn-text {
+  font-weight: 700;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: var(--primary);
+  border-radius: var(--radius-sm);
+  transition: background 0.2s;
+}
+.btn-text:hover {
+  background-color: var(--primary-light);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+.text-danger:hover {
+  background-color: var(--danger-bg);
+}
+
+.text-success {
+  color: var(--success);
+}
+.text-success:hover {
+  background-color: var(--success-bg);
+}
+
+.confirm-msg {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  font-weight: 700;
+  margin-right: 0.5rem;
+}
+
+/* Modal */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.modal {
+  background: var(--bg-surface);
+  width: 100%;
+  max-width: 650px;
+  padding: 3rem;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-xl);
+  max-height: 90vh;
+  overflow-y: auto;
+  border: 1px solid var(--border-color);
+}
+.modal.bookings-modal {
+  max-width: 800px;
+}
+.modal-table-container {
+  max-height: 60vh;
+}
+
+.modal-title {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  font-weight: 800;
+  color: var(--primary);
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 2.5rem;
+}
+.filter-select {
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+}
+.empty-text {
+  text-align: center;
+  color: var(--text-muted);
+  font-style: italic;
+  padding: 3rem;
+}
+
+/* Rating */
+.rating-cell {
+  font-weight: 700;
+}
+.star {
+  color: var(--warning);
+  margin-left: 0.25rem;
+  font-size: 1.1em;
+}
+
+/* Badge */
+.status-badge {
+  font-size: 0.75rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  padding: 0.35rem 0.75rem;
+  border-radius: 99px;
+  letter-spacing: 0.05em;
+}
+.status-badge.confirmed {
+  background: var(--success-bg);
+  color: #059669;
+}
+.status-badge.canceled {
+  background: var(--danger-bg);
+  color: var(--danger);
+}
+.status-badge.attended {
+  background: var(--primary-light);
+  color: var(--primary);
+}
+.status-badge.unknown {
+  background: #f1f5f9;
+  color: #475569;
+} /* slate-100, slate-600 */
+
+/* Input with Prefix for Price Field */
+.input-with-prefix {
+  position: relative;
+}
+
+.input-prefix {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  font-weight: 700;
+  pointer-events: none;
+  font-size: 0.95rem; /* Match input font-size */
+}
+
+.input-with-prefix .form-input {
+  padding-left: 2.25rem; /* Make space for the '$' */
+}
+
+/* Confirmation Modal Specifics */
+.confirmation-modal {
+  max-width: 400px;
+  text-align: center;
+}
+
+.confirmation-text {
+  color: var(--text-body);
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.btn-danger-solid {
+  background-color: var(--danger);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  transition: all 0.2s;
+  box-shadow: 0 4px 6px rgba(220, 38, 38, 0.2);
+}
+
+.btn-danger-solid:hover {
+  background-color: #b91c1c;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 10px rgba(220, 38, 38, 0.3);
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    align-items: center; /* Center to match dashboard look */
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .toolbar-right {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-tabs {
+    /* Auto width to fit buttons only */
+    width: auto;
+    max-width: 100%;
+    /* Wrap buttons if necessary */
+    flex-wrap: wrap;
+    justify-content: center;
+    overflow-x: visible;
+    display: flex;
+    height: auto;
+    border-radius: 1.5rem;
+  }
+
+  .tab-btn {
+    white-space: nowrap;
+    flex-grow: 1;
+    text-align: center;
+  }
+
+  .modal {
+    padding: 1.5rem;
+    width: 95%;
+  }
+}

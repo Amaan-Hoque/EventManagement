@@ -1,0 +1,67 @@
+<div class="feedback-wrapper">
+  <div class="feedback-header">
+    <h3 class="header-title">Reviews</h3>
+    <div class="rating-display">
+      <span class="score">{{ averageRating | number: '1.1-1' }}</span>
+      <span class="star">★</span>
+    </div>
+  </div>
+
+  <div *ngIf="!authService.isAdmin()" class="feedback-form-area" [ngSwitch]="reviewState">
+    <div *ngSwitchCase="'can_review'">
+      <form
+        #feedbackForm="ngForm"
+        (ngSubmit)="submitFeedback(feedbackForm)"
+        class="review-box"
+        novalidate
+      >
+        <div class="box-header">
+          <span>Leave a Review</span>
+          <select name="rating" [(ngModel)]="feedbackModel.rating" class="rating-input" required>
+            <option [ngValue]="5">5 - Excellent</option>
+            <option [ngValue]="4">4 - Good</option>
+            <option [ngValue]="3">3 - Average</option>
+            <option [ngValue]="2">2 - Poor</option>
+            <option [ngValue]="1">1 - Terrible</option>
+          </select>
+        </div>
+        <textarea
+          name="comment"
+          [(ngModel)]="feedbackModel.comment"
+          #commentCtrl="ngModel"
+          rows="3"
+          class="form-textarea"
+          placeholder="Tell us about your experience..."
+          required
+        >
+        </textarea>
+        <div class="box-footer">
+          <button type="submit" [disabled]="feedbackForm.invalid" class="btn btn-primary btn-sm">
+            Post
+          </button>
+        </div>
+      </form>
+    </div>
+    <div *ngSwitchCase="'login_required'" class="msg-box">
+      <p>Please <a routerLink="/login" class="link">log in</a> to review.</p>
+    </div>
+    <div *ngSwitchCase="'no_ticket'" class="msg-box">
+      <p>Only attendees can review.</p>
+    </div>
+    <div *ngSwitchCase="'event_future'" class="msg-box">
+      <p>Event hasn't started yet.</p>
+    </div>
+  </div>
+
+  <div class="reviews-stream">
+    <div *ngFor="let f of feedbacks" class="review-card">
+      <div class="card-head">
+        <span class="user">{{ authService.getUserName(f.userId) }}</span>
+        <span class="stars">{{ f.rating }} ★</span>
+      </div>
+      <p class="comment">{{ f.comments }}</p>
+      <small class="date">{{ f.submittedTimestamp | date: 'mediumDate' }}</small>
+    </div>
+    <p *ngIf="feedbacks.length === 0" class="empty-text">No reviews yet.</p>
+  </div>
+</div>

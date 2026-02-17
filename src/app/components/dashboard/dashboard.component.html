@@ -1,0 +1,245 @@
+<div class="container page-spacing">
+  <div class="dash-header">
+    <div class="welcome">
+      <h1>Welcome back, {{ user?.name }}</h1>
+      <p>{{ subtitle }}</p>
+    </div>
+    <div class="dash-tabs">
+      <button
+        (click)="activeTab = 'bookings'"
+        [class.active]="activeTab === 'bookings'"
+        class="tab-pill"
+      >
+        My Bookings
+      </button>
+      <button
+        (click)="activeTab = 'feedbacks'"
+        [class.active]="activeTab === 'feedbacks'"
+        class="tab-pill"
+      >
+        My Feedbacks
+      </button>
+      <button
+        (click)="activeTab = 'settings'"
+        [class.active]="activeTab === 'settings'"
+        class="tab-pill"
+      >
+        Settings
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'bookings'">
+    <div>
+      <div class="stats-row">
+        <div class="stat-box">
+          <span class="stat-label">Bookings</span>
+          <span class="stat-val">{{ stats.totalBookings }}</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-label">Upcoming</span>
+          <span class="stat-val">{{ stats.upcoming }}</span>
+        </div>
+      </div>
+
+      <div class="dash-grid">
+        <div class="main-col">
+          <section class="dash-section">
+            <h3>Upcoming Events</h3>
+            <div class="card-list">
+              <div *ngFor="let t of upcomingTickets" class="mini-card">
+                <div class="mini-content">
+                  <h4>{{ t.eventName }}</h4>
+                  <p>{{ t.eventDate | date: 'mediumDate' }}</p>
+                </div>
+                <div class="mini-action">
+                  <span class="badge confirmed">Confirmed</span>
+                  <button (click)="initiateCancelTicket(t.ticketId)" class="link-danger">
+                    Cancel
+                  </button>
+                </div>
+              </div>
+
+              <!-- empty state -->
+              <div *ngIf="upcomingTickets.length === 0" class="empty-state">
+                <div class="css-icon-calendar"></div>
+                <h4>No Upcoming Events</h4>
+                <p>You haven't booked any future events yet.</p>
+                <a routerLink="/" class="btn btn-primary btn-sm btn-browse">Browse Events</a>
+              </div>
+            </div>
+          </section>
+
+          <section class="dash-section">
+            <h3>Booking History</h3>
+            <div class="history-wrapper">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Event</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let t of myTickets">
+                    <td>{{ t.eventName }}</td>
+                    <td>{{ t.eventDate | date: 'shortDate' }}</td>
+                    <td>
+                      <span
+                        class="badge"
+                        [class.confirmed]="t.displayStatus === 'Confirmed'"
+                        [class.canceled]="t.displayStatus === 'Canceled'"
+                        >{{ t.displayStatus }}</span
+                      >
+                    </td>
+                  </tr>
+                  <tr *ngIf="myTickets.length === 0">
+                    <td colspan="3">
+                      <!-- empty state -->
+                      <div class="empty-state small-empty">
+                        <div class="css-icon-clock"></div>
+                        <p>No booking history found.</p>
+                      </div>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+
+    <!-- cancel ticket confirmation modal -->
+    <div *ngIf="cancelingTicketId" class="modal-backdrop">
+      <div class="modal confirmation-modal">
+        <h2 class="modal-title">Cancel Booking?</h2>
+        <p class="confirmation-text">
+          Are you sure you want to cancel this booking? This action cannot be undone.
+        </p>
+        <div class="modal-actions">
+          <button (click)="abortCancelTicket()" class="btn btn-secondary">Keep Ticket</button>
+          <button (click)="confirmCancelTicket()" class="btn btn-danger-solid">Yes, Cancel</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'feedbacks'">
+    <div class="main-col feedback-container">
+      <!-- pending reviews section -->
+      <section class="dash-section" *ngIf="pendingReviewEvents.length > 0">
+        <h3>Pending Reviews</h3>
+        <p class="section-desc">Share your experience for events you've attended.</p>
+
+        <div class="card-list">
+          <div *ngFor="let e of pendingReviewEvents" class="pending-review-wrapper">
+            <div class="mini-card feedback-card">
+              <div class="mini-content">
+                <h4>{{ e.name }}</h4>
+                <p>{{ e.date | date: 'mediumDate' }} • {{ e.location }}</p>
+              </div>
+
+              <div class="mini-action" *ngIf="reviewingEventId !== e.eventId">
+                <button (click)="initiateReview(e.eventId)" class="btn btn-sm btn-primary">
+                  Write Review
+                </button>
+              </div>
+            </div>
+
+            <!-- inline review form -->
+            <div *ngIf="reviewingEventId === e.eventId" class="review-editor">
+              <form #reviewForm="ngForm" (ngSubmit)="submitReview(reviewForm)">
+                <div class="form-group-inline">
+                  <label class="form-label">Rating</label>
+                  <select
+                    name="rating"
+                    [(ngModel)]="reviewModel.rating"
+                    class="form-select review-select"
+                    required
+                  >
+                    <option [ngValue]="5">5 - Excellent</option>
+                    <option [ngValue]="4">4 - Good</option>
+                    <option [ngValue]="3">3 - Average</option>
+                    <option [ngValue]="2">2 - Poor</option>
+                    <option [ngValue]="1">1 - Terrible</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Comment</label>
+                  <textarea
+                    name="comment"
+                    [(ngModel)]="reviewModel.comment"
+                    class="form-textarea"
+                    rows="3"
+                    placeholder="Tell us how it was..."
+                    required
+                  ></textarea>
+                </div>
+                <div class="editor-actions">
+                  <button type="button" (click)="cancelReview()" class="btn btn-sm btn-secondary">
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    [disabled]="reviewForm.invalid"
+                    class="btn btn-sm btn-primary"
+                  >
+                    Submit Review
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- past reviews -->
+      <section class="dash-section">
+        <h3>My Past Reviews</h3>
+        <div class="card-list">
+          <div *ngFor="let f of myFeedbacks" class="mini-card feedback-card">
+            <div class="mini-content">
+              <h4>{{ f.eventName }}</h4>
+              <div class="rating-row">
+                <span class="star-rating">{{ f.rating }} ★</span>
+                <span class="review-date">{{ f.submittedTimestamp | date: 'mediumDate' }}</span>
+              </div>
+              <p class="review-text">"{{ f.comments }}"</p>
+            </div>
+            <div class="mini-action">
+              <button (click)="initiateDeleteFeedback(f.feedbackId)" class="link-danger">
+                Delete
+              </button>
+            </div>
+          </div>
+
+          <!-- empty state{reviews CSS Icon) -->
+          <div *ngIf="myFeedbacks.length === 0" class="empty-state">
+            <div class="css-icon-bubble"></div>
+            <p>You haven't posted any reviews yet.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- feedback delete confirmation modal -->
+      <div *ngIf="deletingFeedbackId" class="modal-backdrop">
+        <div class="modal confirmation-modal">
+          <h2 class="modal-title">Delete Review?</h2>
+          <p class="confirmation-text">
+            Are you sure you want to permanently delete this review? This action cannot be undone.
+          </p>
+          <div class="modal-actions">
+            <button (click)="abortDeleteFeedback()" class="btn btn-secondary">Cancel</button>
+            <button (click)="confirmDeleteFeedback()" class="btn btn-danger-solid">Delete</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'settings'">
+    <app-profile></app-profile>
+  </div>
+</div>

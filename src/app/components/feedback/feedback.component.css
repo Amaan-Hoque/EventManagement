@@ -1,0 +1,127 @@
+.feedback-wrapper {
+  margin-top: 1rem;
+}
+
+.feedback-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 1.5rem;
+}
+
+.header-title {
+  font-size: 1.75rem;
+  color: var(--text-main);
+  font-weight: 800;
+}
+
+.rating-display {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--text-main);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+.star {
+  color: var(--warning);
+  filter: drop-shadow(0 2px 4px rgba(245, 158, 11, 0.3));
+}
+
+.review-box {
+  background: var(--bg-surface);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 3rem;
+  box-shadow: var(--shadow-lg);
+}
+
+.box-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+  align-items: center;
+}
+
+.rating-input {
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  font-weight: 600;
+  color: var(--text-body);
+}
+
+.box-footer {
+  text-align: right;
+  margin-top: 1.5rem;
+}
+
+.msg-box {
+  background: var(--bg-body);
+  padding: 2rem;
+  text-align: center;
+  border-radius: 1.5rem;
+  margin-bottom: 3rem;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+.link {
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.reviews-stream {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.review-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  transition: transform 0.2s;
+}
+.review-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.card-head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+.user {
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+.stars {
+  color: var(--warning);
+  font-weight: 700;
+}
+.comment {
+  font-size: 1.05rem;
+  color: var(--text-body);
+  font-style: italic;
+  line-height: 1.6;
+}
+.date {
+  display: block;
+  text-align: right;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+.empty-text {
+  color: var(--text-muted);
+  text-align: center;
+  padding: 2rem;
+}

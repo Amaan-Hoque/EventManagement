@@ -1,0 +1,159 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2 class="auth-title">Create Account</h2>
+      <p class="auth-subtitle">Join us to book exclusive events.</p>
+    </div>
+
+    <div *ngIf="errorMsg" class="alert alert-error">
+      {{ errorMsg }}
+    </div>
+
+    <form #registerForm="ngForm" (ngSubmit)="onSubmit(registerForm)" class="auth-form" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="name">Full Name</label>
+        <input
+          type="text"
+          id="name"
+          name="name"
+          [(ngModel)]="user.name"
+          #nameCtrl="ngModel"
+          class="form-input"
+          placeholder="e.g. John Doe"
+          required
+          minlength="4"
+        />
+        <span *ngIf="nameCtrl.invalid && (nameCtrl.dirty || nameCtrl.touched)" class="form-error">
+          Name is required (min 4 chars).
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <!-- used appDomainValidator for @test.com domain check -->
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="user.email"
+          #emailCtrl="ngModel"
+          class="form-input"
+          placeholder="name@test.com"
+          required
+          appDomainValidator
+        />
+
+        <div *ngIf="emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)">
+          <span *ngIf="emailCtrl.errors?.['required']" class="form-error">
+            Email is required.
+          </span>
+          <span *ngIf="emailCtrl.errors?.['email']" class="form-error">
+            Enter a valid email address.
+          </span>
+          <span *ngIf="emailCtrl.errors?.['domainInvalid']" class="form-error">
+            Email must be from the @test.com domain.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="contact">Contact Number</label>
+        <input
+          type="tel"
+          id="contact"
+          name="contact"
+          [(ngModel)]="user.contact"
+          #contactCtrl="ngModel"
+          class="form-input"
+          placeholder="e.g. 9876545678"
+          required
+          pattern="^[0-9+\-\s]{10}$"
+        />
+        <span
+          *ngIf="contactCtrl.invalid && (contactCtrl.dirty || contactCtrl.touched)"
+          class="form-error"
+        >
+          Valid 10 digit phone number required.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="location">Location</label>
+        <select
+          id="location"
+          name="location"
+          [(ngModel)]="user.location"
+          #locationCtrl="ngModel"
+          class="form-select"
+          required
+        >
+          <option value="" disabled>Select your city</option>
+          <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+        </select>
+        <span
+          *ngIf="locationCtrl.invalid && (locationCtrl.dirty || locationCtrl.touched)"
+          class="form-error"
+        >
+          Please select a location.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="user.password"
+          #passwordCtrl="ngModel"
+          class="form-input"
+          placeholder="Min 6 characters"
+          required
+          minlength="6"
+        />
+        <span
+          *ngIf="passwordCtrl.invalid && (passwordCtrl.dirty || passwordCtrl.touched)"
+          class="form-error"
+        >
+          Password must be at least 6 characters.
+        </span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="confirmPassword">Confirm Password</label>
+        <!-- used appPasswordMatch custom directive -->
+        <input
+          type="password"
+          id="confirmPassword"
+          name="confirmPassword"
+          [(ngModel)]="user.confirmPassword"
+          #confirmCtrl="ngModel"
+          [appPasswordMatch]="user.password"
+          class="form-input"
+          placeholder="Re-enter password"
+          required
+        />
+
+        <div *ngIf="confirmCtrl.invalid && (confirmCtrl.dirty || confirmCtrl.touched)">
+          <span *ngIf="confirmCtrl.errors?.['passwordMismatch']" class="form-error">
+            Passwords do not match.
+          </span>
+          <span
+            *ngIf="confirmCtrl.errors?.['required'] && !confirmCtrl.errors?.['passwordMismatch']"
+            class="form-error"
+          >
+            Please confirm your password.
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="registerForm.invalid" class="btn btn-primary btn-block">
+        Sign Up
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Already have an account? <a routerLink="/login" class="link">Log in</a></p>
+    </div>
+  </div>
+</div>

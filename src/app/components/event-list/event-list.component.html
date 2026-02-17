@@ -1,0 +1,107 @@
+<div class="container page-spacing">
+  <div class="header-section">
+    <h1 class="page-title">Discover Events</h1>
+    <p class="page-subtitle">Find the best experiences happening around you.</p>
+  </div>
+
+  <div class="toolbar">
+    <div class="search-container">
+      <input
+        type="text"
+        [(ngModel)]="searchQuery"
+        class="search-input"
+        placeholder="Search events by name or location..."
+      />
+    </div>
+
+    <div class="filter-container">
+      <select [(ngModel)]="categoryFilter" class="filter-select">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- upcoming events section -->
+  <div *ngIf="upcomingFilteredEvents.length > 0" class="section-container">
+    <h2 class="section-divider-title">Upcoming Events</h2>
+    <div class="event-grid">
+      <div *ngFor="let event of upcomingFilteredEvents" class="event-card">
+        <div class="card-image-wrapper">
+          <img [src]="event.image" alt="Event Cover" class="card-img" />
+          <span class="category-badge">{{ event.category }}</span>
+        </div>
+
+        <div class="card-content">
+          <h3 class="card-title">{{ event.name }}</h3>
+          <div class="card-meta">
+            <span
+              >📅 {{ event.date | date: 'mediumDate' }} •
+              {{ getEventDate(event) | date: 'shortTime' }}</span
+            >
+            <span>📍 {{ event.location }}</span>
+          </div>
+          <div class="avail-indicator">
+            <span class="dot"></span>
+            <span>{{ getAvailability(event) }} left / {{ event.totalTickets }} total</span>
+          </div>
+          <p class="card-desc">{{ event.description }}</p>
+
+          <div class="card-footer">
+            <span class="price-tag">{{
+              event.price === 0 ? 'Free' : (event.price | currency)
+            }}</span>
+            <a [routerLink]="['/event', event.eventId]" class="btn btn-details">Details &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- past events section -->
+  <div *ngIf="pastFilteredEvents.length > 0" class="section-container past-section">
+    <h2 class="section-divider-title">Past Events</h2>
+    <div class="event-grid">
+      <div *ngFor="let event of pastFilteredEvents" class="event-card is-ended">
+        <div class="card-image-wrapper">
+          <img [src]="event.image" alt="Event Cover" class="card-img" />
+          <span class="category-badge">{{ event.category }}</span>
+          <div class="ended-overlay">Ended</div>
+        </div>
+
+        <div class="card-content">
+          <h3 class="card-title">{{ event.name }}</h3>
+          <div class="card-meta">
+            <span
+              >📅 {{ event.date | date: 'mediumDate' }} •
+              {{ getEventDate(event) | date: 'shortTime' }}</span
+            >
+            <span>📍 {{ event.location }}</span>
+          </div>
+          <p class="card-desc">{{ event.description }}</p>
+
+          <div class="card-footer">
+            <span class="price-tag">{{
+              event.price === 0 ? 'Free' : (event.price | currency)
+            }}</span>
+            <a [routerLink]="['/event', event.eventId]" class="btn btn-details">Details &rarr;</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- no results -->
+  <div
+    *ngIf="upcomingFilteredEvents.length === 0 && pastFilteredEvents.length === 0"
+    class="no-results"
+  >
+    <ng-container *ngIf="hasEvents">
+      <p>No events found matching your search.</p>
+      <button (click)="searchQuery = ''; categoryFilter = ''" class="btn-text">
+        Clear Filters
+      </button>
+    </ng-container>
+    <p *ngIf="!hasEvents">There are currently no events available.</p>
+  </div>
+</div>

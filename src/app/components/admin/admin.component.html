@@ -1,0 +1,404 @@
+<div class="container page-spacing">
+  <div class="admin-header">
+    <div class="header-content">
+      <h1 class="page-title">Administration</h1>
+      <p class="welcome-msg">Welcome back, {{ authService.currentUserValue?.name }}</p>
+    </div>
+    <div class="admin-tabs">
+      <button
+        (click)="activeTab = 'events'"
+        [class.active]="activeTab === 'events'"
+        class="tab-btn"
+      >
+        Events
+      </button>
+      <button
+        (click)="activeTab = 'bookings'"
+        [class.active]="activeTab === 'bookings'"
+        class="tab-btn"
+      >
+        Bookings
+      </button>
+      <button
+        (click)="activeTab = 'feedbacks'"
+        [class.active]="activeTab === 'feedbacks'"
+        class="tab-btn"
+      >
+        Feedback
+      </button>
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'events'">
+    <div>
+      <div class="toolbar-right">
+        <select [(ngModel)]="eventFilterCategory" class="filter-select">
+          <option value="">All Categories</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+        <button (click)="addNew()" class="btn btn-primary">+ Add Event</button>
+      </div>
+
+      <!-- Modal -->
+      <div *ngIf="showForm" class="modal-backdrop">
+        <div class="modal">
+          <h2 class="modal-title">{{ editing ? 'Edit Event' : 'New Event' }}</h2>
+          <form [formGroup]="eventForm" (ngSubmit)="save()">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">Name</label>
+                <input formControlName="name" class="form-input" />
+                <span
+                  *ngIf="eventForm.get('name')?.invalid && eventForm.get('name')?.touched"
+                  class="form-error"
+                >
+                  Event name is required.
+                </span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Category</label>
+                <select formControlName="category" class="form-select">
+                  <option value="" disabled>Select Category</option>
+                  <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+                </select>
+                <span
+                  *ngIf="eventForm.get('category')?.invalid && eventForm.get('category')?.touched"
+                  class="form-error"
+                >
+                  Category is required.
+                </span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Location</label>
+                <select formControlName="location" class="form-select">
+                  <option value="" disabled>Select Location</option>
+                  <option *ngFor="let loc of locations" [value]="loc">{{ loc }}</option>
+                </select>
+                <span
+                  *ngIf="eventForm.get('location')?.invalid && eventForm.get('location')?.touched"
+                  class="form-error"
+                >
+                  Location is required.
+                </span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" formControlName="date" class="form-input" [min]="minDate" />
+                <span
+                  *ngIf="
+                    eventForm.get('date')?.hasError('required') && eventForm.get('date')?.touched
+                  "
+                  class="form-error"
+                >
+                  Date is required.
+                </span>
+                <span
+                  *ngIf="
+                    eventForm.get('date')?.hasError('pastDate') && eventForm.get('date')?.touched
+                  "
+                  class="form-error"
+                >
+                  Date cannot be in the past.
+                </span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Time</label>
+                <input type="time" formControlName="time" class="form-input" [min]="minTime" />
+                <span
+                  *ngIf="
+                    eventForm.get('time')?.hasError('required') && eventForm.get('time')?.touched
+                  "
+                  class="form-error"
+                >
+                  Time is required.
+                </span>
+                <span
+                  *ngIf="
+                    eventForm.hasError('pastTime') &&
+                    eventForm.get('date')?.touched &&
+                    eventForm.get('time')?.touched
+                  "
+                  class="form-error"
+                >
+                  Time cannot be in the past for today's date.
+                </span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Price</label>
+                <div class="input-with-prefix">
+                  <span class="input-prefix">$</span>
+                  <input type="number" formControlName="price" class="form-input" />
+                </div>
+                <span
+                  *ngIf="
+                    eventForm.get('price')?.hasError('required') && eventForm.get('price')?.touched
+                  "
+                  class="form-error"
+                >
+                  Price is required.
+                </span>
+                <span
+                  *ngIf="eventForm.get('price')?.hasError('min') && eventForm.get('price')?.touched"
+                  class="form-error"
+                >
+                  Price cannot be negative.
+                </span>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Total Tickets</label>
+                <input type="number" formControlName="totalTickets" class="form-input" />
+                <span
+                  *ngIf="
+                    eventForm.get('totalTickets')?.hasError('required') &&
+                    eventForm.get('totalTickets')?.touched
+                  "
+                  class="form-error"
+                >
+                  Capacity is required.
+                </span>
+                <span
+                  *ngIf="
+                    eventForm.get('totalTickets')?.hasError('min') &&
+                    eventForm.get('totalTickets')?.touched
+                  "
+                  class="form-error"
+                >
+                  Must be at least 1.
+                </span>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Description</label>
+              <textarea formControlName="description" rows="4" class="form-textarea"></textarea>
+              <span
+                *ngIf="
+                  eventForm.get('description')?.hasError('required') &&
+                  eventForm.get('description')?.touched
+                "
+                class="form-error"
+              >
+                Description is required.
+              </span>
+              <span
+                *ngIf="
+                  eventForm.get('description')?.hasError('minlength') &&
+                  eventForm.get('description')?.touched
+                "
+                class="form-error"
+              >
+                Must be at least 10 characters.
+              </span>
+            </div>
+            <div class="modal-actions">
+              <button type="button" (click)="cancel()" class="btn btn-secondary">Cancel</button>
+              <button
+                type="submit"
+                [disabled]="eventForm.invalid || (editing && eventForm.pristine)"
+                class="btn btn-primary"
+              >
+                Save
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Date / Time</th>
+              <th>Location</th>
+              <th>Price</th>
+              <th>Capacity</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let e of filteredEvents">
+              <td>{{ e.name }}</td>
+              <td>
+                {{ e.date | date: 'shortDate' }} <small>{{ e.time }}</small>
+              </td>
+              <td>{{ e.location }}</td>
+              <td>{{ e.price | currency }}</td>
+              <td>{{ e.totalTickets }}</td>
+              <td class="text-right">
+                <div class="action-row">
+                  <button (click)="edit(e)" class="btn-text">Edit</button>
+                  <button (click)="initiateDeleteEvent(e.eventId)" class="btn-text text-danger">
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredEvents.length === 0">
+              <td colspan="6" class="empty-text">No events found for this category.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- event delete confirmation modal -->
+    <div *ngIf="eventToDeleteId" class="modal-backdrop">
+      <div class="modal confirmation-modal">
+        <h2 class="modal-title">Delete Event?</h2>
+        <p class="confirmation-text">
+          Are you sure you want to permanently delete this event? This will also remove all
+          associated bookings and feedback. This action cannot be undone.
+        </p>
+        <div class="modal-actions">
+          <button (click)="cancelDeleteEvent()" class="btn btn-secondary">Cancel</button>
+          <button (click)="confirmDeleteEvent()" class="btn btn-danger-solid">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'bookings'">
+    <div class="toolbar-right">
+      <select [(ngModel)]="bookingFilterCategory" class="filter-select">
+        <option value="">All Categories</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+
+    <div class="table-container">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Confirmed Bookings</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let item of eventsWithBookingCounts"
+            class="clickable"
+            (click)="viewBookingsForEvent(item.event)"
+          >
+            <td>{{ item.event.name }}</td>
+            <td>{{ item.event.date | date: 'shortDate' }}</td>
+            <td>{{ item.bookingCount }} / {{ item.event.totalTickets }}</td>
+            <td class="text-right">
+              <button (click)="viewBookingsForEvent(item.event)" class="btn-text">
+                View Bookings
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="eventsWithBookingCounts.length === 0">
+            <td colspan="4" class="empty-text">No events found for this category.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- bookings modal -->
+    <div *ngIf="selectedEventForBookings" class="modal-backdrop">
+      <div class="modal bookings-modal">
+        <h2 class="modal-title">Bookings for: {{ selectedEventForBookings.name }}</h2>
+        <div class="table-container modal-table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Date Booked</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let attendee of attendeesForSelectedEvent">
+                <td>{{ attendee.userName }}</td>
+                <td>{{ attendee.bookingDate | date: 'short' }}</td>
+                <td>
+                  <span
+                    class="status-badge"
+                    [class.confirmed]="attendee.displayStatus === 'Confirmed'"
+                    [class.canceled]="attendee.displayStatus === 'Canceled'"
+                    [class.attended]="attendee.displayStatus === 'Attended'"
+                    [class.unknown]="attendee.displayStatus === 'No Available Status'"
+                  >
+                    {{ attendee.displayStatus }}
+                  </span>
+                </td>
+              </tr>
+              <!-- empty state row -->
+              <tr *ngIf="attendeesForSelectedEvent.length === 0">
+                <td colspan="3" class="empty-text">No bookings found for this event.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="modal-actions">
+          <button (click)="closeBookingsModal()" class="btn btn-secondary">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div *ngIf="activeTab === 'feedbacks'">
+    <div>
+      <div class="toolbar-right">
+        <select [(ngModel)]="feedbackFilterEventId" class="filter-select">
+          <option value="">All Events</option>
+          <option *ngFor="let e of eventService.publicevents" [value]="e.eventId">
+            {{ e.name }}
+          </option>
+        </select>
+      </div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>User</th>
+              <th>Rating</th>
+              <th>Comment</th>
+              <th class="text-right">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let f of filteredFeedbacks">
+              <td>{{ getEventName(f.eventId) }}</td>
+              <td>{{ getUserName(f.userId) }}</td>
+              <td class="rating-cell">{{ f.rating }} <span class="star">★</span></td>
+              <td>{{ f.comments }}</td>
+              <td class="text-right">
+                <div class="action-row">
+                  <button
+                    (click)="initiateDeleteFeedback(f.feedbackId)"
+                    class="btn-text text-danger"
+                  >
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="filteredFeedbacks.length === 0">
+              <td colspan="5" class="empty-text">No feedbacks.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- feedback delete confirmation modal -->
+    <div *ngIf="feedbackToDeleteId" class="modal-backdrop">
+      <div class="modal confirmation-modal">
+        <h2 class="modal-title">Delete Feedback?</h2>
+        <p class="confirmation-text">
+          Are you sure you want to permanently delete this review? This action cannot be undone.
+        </p>
+        <div class="modal-actions">
+          <button (click)="cancelDeleteFeedback()" class="btn btn-secondary">Cancel</button>
+          <button (click)="confirmDeleteFeedback()" class="btn btn-danger-solid">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,156 @@
+<div *ngIf="event as evt">
+  <div class="container page-spacing">
+    <h1 class="page-title">Complete your Booking</h1>
+
+    <div class="booking-grid">
+      <div class="summary-panel">
+        <h2 class="panel-title">Order Summary</h2>
+        <div class="event-brief">
+          <h3>{{ evt.name }}</h3>
+          <p>{{ evt.date | date: 'mediumDate' }} at {{ getEventDate(evt) | date: 'shortTime' }}</p>
+          <p>{{ evt.location }}</p>
+        </div>
+
+        <div class="cost-breakdown">
+          <div class="form-group">
+            <label class="form-label">Quantity</label>
+            <div class="quantity-control">
+              <button
+                type="button"
+                (click)="decrementQty()"
+                [disabled]="quantity <= 1"
+                class="qty-btn"
+              >
+                −
+              </button>
+              <span class="qty-val">{{ quantity }}</span>
+              <button
+                type="button"
+                (click)="incrementQty()"
+                [disabled]="quantity >= availableTickets || quantity >= 10"
+                class="qty-btn"
+              >
+                +
+              </button>
+            </div>
+          </div>
+
+          <div class="cost-row">
+            <span>Price per Ticket</span>
+            <span>{{ evt.price | currency }}</span>
+          </div>
+          <div class="cost-row total">
+            <span>Total ({{ quantity }})</span>
+            <span>{{ evt.price * quantity | currency }}</span>
+          </div>
+        </div>
+        <div class="avail-note">
+          <small>Only {{ availableTickets }} tickets remaining.</small>
+        </div>
+      </div>
+
+      <div class="payment-panel">
+        <h2 class="panel-title">Payment Details</h2>
+        <form [formGroup]="paymentForm" (ngSubmit)="processPayment()">
+          <div class="form-group">
+            <label class="form-label">Card Number</label>
+            <input
+              type="text"
+              formControlName="cardNumber"
+              class="form-input"
+              maxlength="16"
+              placeholder="Enter 16-digit card number"
+            />
+            <span
+              *ngIf="
+                paymentForm.get('cardNumber')?.invalid && paymentForm.get('cardNumber')?.touched
+              "
+              class="form-error"
+              >Invalid card number.</span
+            >
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Card Holder</label>
+            <input
+              type="text"
+              formControlName="cardHolder"
+              class="form-input"
+              placeholder="Name on card"
+            />
+            <div
+              *ngIf="
+                paymentForm.get('cardHolder')?.invalid && paymentForm.get('cardHolder')?.touched
+              "
+            >
+              <span *ngIf="paymentForm.get('cardHolder')?.hasError('required')" class="form-error"
+                >Name required.</span
+              >
+              <span *ngIf="paymentForm.get('cardHolder')?.hasError('minlength')" class="form-error"
+                >Name must be at least 3 characters.</span
+              >
+              <span *ngIf="paymentForm.get('cardHolder')?.hasError('pattern')" class="form-error"
+                >Name can only contain letters and spaces.</span
+              >
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Expiry</label>
+              <input
+                type="text"
+                formControlName="expiry"
+                class="form-input"
+                placeholder="MM/YY"
+                (input)="formatExpiry($event)"
+                maxlength="5"
+              />
+              <div *ngIf="paymentForm.get('expiry')?.invalid && paymentForm.get('expiry')?.touched">
+                <span *ngIf="paymentForm.get('expiry')?.hasError('required')" class="form-error"
+                  >Expiry date is required.</span
+                >
+                <span
+                  *ngIf="paymentForm.get('expiry')?.hasError('containsAlphabets')"
+                  class="form-error"
+                  >Expiry date cannot contain letters.</span
+                >
+                <span *ngIf="paymentForm.get('expiry')?.hasError('pattern')" class="form-error"
+                  >Format must be MM/YY.</span
+                >
+                <span
+                  *ngIf="paymentForm.get('expiry')?.hasError('pastExpiryDate')"
+                  class="form-error"
+                  >Card has expired.</span
+                >
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">CVV</label>
+              <input
+                type="password"
+                formControlName="cvv"
+                class="form-input"
+                maxlength="3"
+                placeholder="123"
+              />
+              <span
+                *ngIf="paymentForm.get('cvv')?.invalid && paymentForm.get('cvv')?.touched"
+                class="form-error"
+                >Invalid CVV.</span
+              >
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            [disabled]="paymentForm.invalid || processing || quantity === 0"
+            class="btn btn-primary btn-block"
+          >
+            {{ 'Pay ' + (evt.price * quantity | currency) }}
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<div *ngIf="errorMessage" class="container page-spacing error-container">
+  <div class="alert-box">
+    <h2>Event Not Found</h2>
+    <p>{{ errorMessage }}</p>
+    <a routerLink="/" class="btn btn-primary">Return to Home</a>
+  </div>
+</div>
+
+<div *ngIf="event as evt">
+  <div class="hero-banner">
+    <div class="hero-bg">
+      <img [src]="evt.image" class="hero-img" />
+      <div class="hero-overlay"></div>
+    </div>
+    <div class="container hero-content">
+      <span class="hero-category">{{ evt.category }}</span>
+      <h1 class="hero-title">{{ evt.name }}</h1>
+      <div class="hero-meta">
+        <span>📍 {{ evt.location }}</span>
+        <span
+          >📅 {{ evt.date | date: 'fullDate' }} • {{ getEventDate(evt) | date: 'shortTime' }}</span
+        >
+      </div>
+    </div>
+  </div>
+
+  <div class="container detail-layout">
+    <div class="main-content">
+      <section class="description-section">
+        <h2 class="section-heading">About this Event</h2>
+        <p class="event-desc">{{ evt.description }}</p>
+      </section>
+
+      <section class="feedback-section">
+        <app-feedback
+          [eventId]="evt.eventId"
+          [eventDate]="evt.date"
+          [eventTime]="evt.time || '00:00'"
+        ></app-feedback>
+      </section>
+    </div>
+
+    <div class="sidebar">
+      <div class="booking-widget">
+        <div class="price-header">
+          <span class="price-label">Ticket Price</span>
+          <span class="price-amount">{{ evt.price === 0 ? 'Free' : (evt.price | currency) }}</span>
+        </div>
+
+        <div class="action-area" [ngSwitch]="bookingState">
+          <button
+            *ngSwitchCase="'bookable'"
+            type="button"
+            [routerLink]="['/book', evt.eventId]"
+            class="btn btn-primary btn-block"
+          >
+            Book Now
+          </button>
+          <button *ngSwitchCase="'ended'" disabled class="btn btn-secondary btn-block">
+            Event Ended
+          </button>
+          <button *ngSwitchCase="'admin'" disabled class="btn btn-secondary btn-block">
+            Admins Cannot Book
+          </button>
+          <button
+            *ngSwitchCase="'guest'"
+            type="button"
+            routerLink="/login"
+            class="btn btn-primary btn-block"
+          >
+            Log in to Book
+          </button>
+        </div>
+
+        <ul class="features-list">
+          <li>✓ Instant Confirmation</li>
+          <li>✓ Secure checkout</li>
+          <li>✓ 24/7 Support</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>

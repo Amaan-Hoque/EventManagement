@@ -1,0 +1,71 @@
+<div class="auth-page">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2 class="auth-title">Welcome Back</h2>
+      <p class="auth-subtitle">Log in to continue to your account.</p>
+    </div>
+
+    <div *ngIf="errorMsg" class="alert alert-error">
+      {{ errorMsg }}
+    </div>
+
+    <form #loginForm="ngForm" (ngSubmit)="onSubmit(loginForm)" class="auth-form" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="email">Email Address</label>
+        <!--custom validator "appDomainValidator"-->
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="credentials.email"
+          #emailCtrl="ngModel"
+          class="form-input"
+          placeholder="you@test.com"
+          required
+          appDomainValidator
+        />
+
+        <div *ngIf="emailCtrl.invalid && (emailCtrl.dirty || emailCtrl.touched)">
+          <span *ngIf="emailCtrl.errors?.['required']" class="form-error">
+            Email is required.
+          </span>
+          <span *ngIf="emailCtrl.errors?.['domainInvalid']" class="form-error">
+            Email must be from the @test.com domain.
+          </span>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="credentials.password"
+          #passCtrl="ngModel"
+          class="form-input"
+          placeholder="••••••••"
+          required
+          minlength="6"
+        />
+
+        <div *ngIf="passCtrl.invalid && (passCtrl.dirty || passCtrl.touched)">
+          <span *ngIf="passCtrl.errors?.['required']" class="form-error">
+            Password is required.
+          </span>
+          <span *ngIf="passCtrl.errors?.['minlength']" class="form-error">
+            Password must be at least 6 characters.
+          </span>
+        </div>
+      </div>
+
+      <button type="submit" [disabled]="loginForm.invalid" class="btn btn-primary btn-block">
+        Sign In
+      </button>
+    </form>
+
+    <div class="auth-footer">
+      <p>Don't have an account? <a routerLink="/register" class="link">Sign up</a></p>
+    </div>
+  </div>
+</div>
